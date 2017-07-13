@@ -74,10 +74,6 @@
     id: 'mapbox.streets'
   }).addTo(mymap);
 
-
-
-
-
 //   var serviceorgs = new L.geoJson();
 //    $.ajax({
 //   dataType: "json",
@@ -94,16 +90,11 @@
 $.getJSON("NYCorgs.json",function(data){ 
 
 // add GeoJSON layer to the map once the file is loaded 
-L.geoJson(data, { style: function (feature) { return {}; }, onEachFeature: function (feature, layer) { layer.bindPopup(feature.properties.provider_name); } }).addTo(mymap); });
-
-
-serviceorgs.bindPopup("I am a point.");
-
- var popup = L.popup()
-    .setLatLng([40.696194, -74.030882])
-    .setContent("I am a standalone popup.")
-    .openOn(mymap);
-
+L.geoJson(data, { style: function (feature) { return {}; }, 
+    onEachFeature: function (feature, layer) { 
+      layer.bindPopup(feature.properties.agency); 
+    }
+    }).addTo(mymap); });
 
 
 </script>
