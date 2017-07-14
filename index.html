@@ -90,11 +90,24 @@
 $.getJSON("NYCorgs.json",function(data){ 
 
 // add GeoJSON layer to the map once the file is loaded 
-L.geoJson(data, { style: function (feature) { return {}; }, 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 0.9
+     } 
+   }, 
     onEachFeature: function (feature, layer) { 
-      layer.bindPopup(feature.properties.agency); 
+      layer.bindPopup(
+        feature.properties.PROVIDER_NAME + '<br>' +
+        feature.properties._address + '<br><br>' +
+        '<b> Program: </b>' +feature.properties.PROGRAM_NAME + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
     }
-    }).addTo(mymap); });
+  }
+    ).addTo(mymap); });
 
 
 </script>
