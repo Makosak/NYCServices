@@ -43,32 +43,36 @@
   </head>
 
   <body>
-    <div class='navbar navbar-default navbar-static-top'>
+    <div class='navbar navbar-inverse navbar-static-top'>
       <div class='container-fluid'>
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class='navbar-brand' href='index.html'>NYC Service Addresses</a>
+          <a class='navbar-brand' href='index.html'>NYC Service Organizations</a>
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">About</a></li>
+        <div class="navbar-collapse navbar-right">
+          <ul class="nav navbar-nav ">
+            <li><a href ="index_DHS.html">DHS</a></li>
+            <li><a href ="index_ACS.html">ACS</a></li>
+            <li><a href ="index_MOCJ.html">MOCJ</a></li>
+            <li><a href ="index_DYCD.html">DYCD</a></li>
+            <li><a href ="index_HPD.html">HPD</a></li>
+            <li><a href ="index_HRA.html">HRA</a></li>
+            <li><a href ="index_SBS.html">SBS</a></li>
+            <li><a href ="index_DOP.html">DOP</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
 
-
-<div id="mapid" style="height: 1000px"></div>
+<div id="mapid" style="height: 700px"></div>
 <script>
 
-  var mymap = L.map('mapid').setView([40.696194, -74.030882], 11);
+  var mymap = L.map('mapid').setView([40.729802, -73.948016], 11);
   
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+
+
+  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19 +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
     id: 'mapbox.streets'
@@ -99,7 +103,26 @@ L.geoJson(data, {
       "opacity": 0.9
      } 
    }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [27, 27],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'blue_marker.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "DHS";
+            },
+
     onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
       layer.bindPopup(
         feature.properties.PROVIDER_NAME + '<br>' +
         feature.properties._address + '<br><br>' +
@@ -108,6 +131,7 @@ L.geoJson(data, {
     }
   }
     ).addTo(mymap); });
+
 
 
 </script>
