@@ -28,11 +28,14 @@
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css"
    integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw=="
    crossorigin=""/>
+    <link rel="stylesheet" src="node_modules/leaflet-search.css"/>
 
     <!-- Make sure you put this AFTER Leaflet's CSS -->
  <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
    integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
    crossorigin=""></script>
+
+
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -62,21 +65,26 @@
         </div><!--/.nav-collapse -->
       </div>
 
-<div id="mapid" style="height: 700px"></div>
+<div id="mapid"></div>
 <script>
 
   var mymap = L.map('mapid').setView([40.729802, -73.948016], 11);
   
 
+var CartoDB_Positron = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(mymap);
 
-  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  /*L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: 'abcd',
     maxZoom: 19 +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
     id: 'mapbox.streets'
-  }).addTo(mymap);
+  })*/
 
 //   var serviceorgs = new L.geoJson();
 //    $.ajax({
@@ -91,7 +99,8 @@
 
 
 // load GeoJSON from an external file 
-$.getJSON("NYCorgs.json",function(data){ 
+var ACS = L.layerGroup( // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
 
 // add GeoJSON layer to the map once the file is loaded 
 L.geoJson(data, { 
@@ -100,16 +109,61 @@ L.geoJson(data, {
      return {
       "color": "#78c679",
       "weight": 5,
-      "opacity": 0.9
+      "opacity": 5.9
      } 
    }, 
 
      pointToLayer: function(feature, layer) {
     var smallIcon = new L.Icon({
-         iconSize: [27, 27],
+         iconSize: [15, 21],
          iconAnchor: [13, 27],
          popupAnchor:  [1, -24],
-         iconUrl: 'blue_marker.png'
+         iconUrl: 'redA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "ACS";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); }));
+
+// load GeoJSON from an external file 
+var DHS = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'lblueA.png'
      });
              return L.marker(layer, {icon: smallIcon});
          },
@@ -124,14 +178,345 @@ L.geoJson(data, {
 
       // Pop Up Window with Core Information    
       layer.bindPopup(
-        feature.properties.PROVIDER_NAME + '<br>' +
-        feature.properties._address + '<br><br>' +
-        '<b> Program: </b>' +feature.properties.PROGRAM_NAME + '<br>' +
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
         '<b> Agency: </b>' + feature.properties.AGENCY); 
     }
   }
     ).addTo(mymap); });
 
+
+// load GeoJSON from an external file 
+var DOP = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'purpleA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "DOP";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+
+// load GeoJSON from an external file 
+var DYCD = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'grayA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "DYCD";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+// load GeoJSON from an external file 
+var HPD = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'greenA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "HPD";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+// load GeoJSON from an external file 
+var HRA = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'dredA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "HRA";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+
+// load GeoJSON from an external file 
+var MOCJ = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'pinkA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "MOCJ";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+// load GeoJSON from an external file 
+var SBS = // load GeoJSON from an external file 
+$.getJSON("NYCorgs2.json",function(data){ 
+
+// add GeoJSON layer to the map once the file is loaded 
+L.geoJson(data, { 
+
+    style: function (feature) {
+     return {
+      "color": "#78c679",
+      "weight": 5,
+      "opacity": 5.9
+     } 
+   }, 
+
+     pointToLayer: function(feature, layer) {
+    var smallIcon = new L.Icon({
+         iconSize: [15, 21],
+         iconAnchor: [13, 27],
+         popupAnchor:  [1, -24],
+         iconUrl: 'dblueA.png'
+     });
+             return L.marker(layer, {icon: smallIcon});
+         },
+
+
+    // filter GeoJSON by Agency
+    filter: function(feature, layer) {
+                return feature.properties.AGENCY == "SBS";
+            },
+
+    onEachFeature: function (feature, layer) { 
+
+      // Pop Up Window with Core Information    
+      layer.bindPopup(
+        '<h5><b>'+ feature.properties.PROVIDER_NAME + '</h5></b>' +
+        feature.properties._address + '<br><i>Site ' +
+        feature.properties.LocNum + ' of ' + feature.properties.TotProvLoc + ' locations. </i> <br><br>' +
+        '<b> Contracts: </b>' +feature.properties.ConNumsProvLoc + '<br>' +
+        '<b> Programs: </b>' +feature.properties.ProgNProvLoc + '<br>' +
+        '<b> Agency: </b>' + feature.properties.AGENCY); 
+    }
+  }
+    ).addTo(mymap); });
+
+
+
+
+var baseMaps = {
+    "Base": CartoDB_Positron
+};
+
+
+var overlayMaps = {
+    "ACS": ACS
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+
+
+
+
+
+var legend = L.control({position: 'bottomleft'});
+
+legend.onAdd = function (mymap) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ["ACS", "DHS","DOP","DYCD","HPD","HRA","MOCJ","SBS"],
+        labels = ['redA.png','lblueA.png','purpleA.png','grayA.png','greenA.png','dredA.png','pinkA.png','dblueA.png'];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            grades[i] + (" <img src="+ labels[i] +" height='21' width='15'>") +'<br>';
+    }
+
+    return div;
+};
+
+legend.addTo(mymap);
+
+/*var searchLayer = L.layerGroup(
+
+  ).addTo(mymap);
+//... adding data in searchLayer ...
+
+
+L.control.search({
+    layer: searchLayer,
+    initial: false,
+    propertyName: 'name',
+    buildTip: function(text, val) {
+      var type = val.layer.feature.properties.amenity;
+      return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>';
+    }
+  }) 
+  .addTo(mymap); 
+
+//mymap.addControl( new L.Control.Search({layer: searchLayer}) );
+//searchLayer is a L.LayerGroup contains searched markers*/
 
 
 </script>
