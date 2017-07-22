@@ -48,7 +48,7 @@
         </div>
         <div class="navbar-collapse navbar-right">
           <ul class="nav navbar-nav ">
-            <li><a href ="index_HRA.html">Human Resources Administration (HRA)</a></li>
+            <li><a href ="MOCJ.html">The Mayor's Office of Criminal Justice (MOCJ)</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -109,7 +109,7 @@ L.geoJson(data, {
 
     // filter GeoJSON by Agency
     filter: function(feature, layer) {
-                return feature.properties.AGENCY == "HRA";
+                return feature.properties.AGENCY == "MOCJ";
             },
 
 
@@ -127,27 +127,6 @@ L.geoJson(data, {
   }
     ).addTo(mymap); });
 
-
-
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function (map) {
-
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-        labels = [];
-
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-    }
-
-    return div;
-};
-
-legend.addTo(mymap);
 
 
 </script>
